@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import * as z from "zod";
 
@@ -19,16 +19,15 @@ const userProfileSchema = z.object({
 
 export async function GET(
   req: Request,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
+    const { userId } = await params;
 
-    if (!session || session.user?.id !== params.userId) {
+    if (!session || session.user?.id !== userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
-
-    const { userId } = params;
 
     const user = await prisma.user.findUnique({
       where: {
@@ -61,16 +60,16 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
+    const { userId } = await params;
 
-    if (!session || session.user?.id !== params.userId) {
+    if (!session || session.user?.id !== userId) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { userId } = params;
     const body = await req.json();
     const validatedData = userProfileSchema.parse(body);
 

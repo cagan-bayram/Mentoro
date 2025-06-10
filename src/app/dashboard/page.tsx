@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import Link from "next/link";
 
 export default function Dashboard() {
   const { data: session, status } = useSession();
@@ -49,22 +50,40 @@ export default function Dashboard() {
               </h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div className="rounded-lg border p-4">
-                  <h3 className="font-medium">Enrolled Courses</h3>
-                  <p className="mt-2 text-sm text-gray-600">
-                    You haven't enrolled in any courses yet.
+                  <h3 className="font-medium">Browse Lessons</h3>
+                  <p className="mt-2 text-sm text-gray-600 mb-3">
+                    Discover and book lessons from expert teachers.
                   </p>
+                  <Link
+                    href="/lessons"
+                    className="inline-block bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 transition-colors"
+                  >
+                    Browse Lessons
+                  </Link>
                 </div>
                 <div className="rounded-lg border p-4">
-                  <h3 className="font-medium">Upcoming Lessons</h3>
-                  <p className="mt-2 text-sm text-gray-600">
-                    No upcoming lessons scheduled.
+                  <h3 className="font-medium">My Bookings</h3>
+                  <p className="mt-2 text-sm text-gray-600 mb-3">
+                    View and manage your lesson bookings.
                   </p>
+                  <Link
+                    href="/bookings"
+                    className="inline-block bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 transition-colors"
+                  >
+                    View Bookings
+                  </Link>
                 </div>
                 <div className="rounded-lg border p-4">
-                  <h3 className="font-medium">Recommended Mentors</h3>
-                  <p className="mt-2 text-sm text-gray-600">
+                  <h3 className="font-medium">Find Mentors</h3>
+                  <p className="mt-2 text-sm text-gray-600 mb-3">
                     Browse available mentors to start learning.
                   </p>
+                  <Link
+                    href="/mentors"
+                    className="inline-block bg-purple-600 text-white px-4 py-2 rounded text-sm hover:bg-purple-700 transition-colors"
+                  >
+                    Browse Mentors
+                  </Link>
                 </div>
               </div>
             </div>
@@ -75,22 +94,64 @@ export default function Dashboard() {
               </h2>
               <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 <div className="rounded-lg border p-4">
-                  <h3 className="font-medium">Your Courses</h3>
-                  <p className="mt-2 text-sm text-gray-600">
-                    You haven't created any courses yet.
+                  <h3 className="font-medium">My Courses</h3>
+                  <p className="mt-2 text-sm text-gray-600 mb-3">
+                    Create and manage your courses.
                   </p>
+                  <Link
+                    href="/teacher/courses"
+                    className="inline-block bg-blue-600 text-white px-4 py-2 rounded text-sm hover:bg-blue-700 transition-colors"
+                  >
+                    Manage Courses
+                  </Link>
                 </div>
                 <div className="rounded-lg border p-4">
-                  <h3 className="font-medium">Upcoming Sessions</h3>
-                  <p className="mt-2 text-sm text-gray-600">
-                    No upcoming teaching sessions scheduled.
+                  <h3 className="font-medium">My Lessons</h3>
+                  <p className="mt-2 text-sm text-gray-600 mb-3">
+                    Create and manage individual lessons.
                   </p>
+                  <Link
+                    href="/teacher/lessons"
+                    className="inline-block bg-green-600 text-white px-4 py-2 rounded text-sm hover:bg-green-700 transition-colors"
+                  >
+                    Manage Lessons
+                  </Link>
                 </div>
                 <div className="rounded-lg border p-4">
-                  <h3 className="font-medium">Student Requests</h3>
-                  <p className="mt-2 text-sm text-gray-600">
-                    No pending student requests.
+                  <h3 className="font-medium">Bookings</h3>
+                  <p className="mt-2 text-sm text-gray-600 mb-3">
+                    View and manage student bookings.
                   </p>
+                  <Link
+                    href="/bookings"
+                    className="inline-block bg-purple-600 text-white px-4 py-2 rounded text-sm hover:bg-purple-700 transition-colors"
+                  >
+                    View Bookings
+                  </Link>
+                </div>
+              </div>
+              
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/teacher/courses/create"
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Create New Course
+                  </Link>
+                  <Link
+                    href="/teacher/lessons/create"
+                    className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Create New Lesson
+                  </Link>
+                  <Link
+                    href="/teacher/profile"
+                    className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                  >
+                    Edit Profile
+                  </Link>
                 </div>
               </div>
             </div>
