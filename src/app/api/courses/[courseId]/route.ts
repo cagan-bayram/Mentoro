@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import * as z from "zod";
 
@@ -15,17 +15,21 @@ const courseSchema = z.object({
 });
 
 export async function GET(
-  req: Request,
-  { params }: { params: { courseId: string } }
+  request: Request,
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (session.user.role !== "TEACHER") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user?.role !== "TEACHER") {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
-
-    const { courseId } = params;
+    const { courseId } = await params;
 
     const course = await prisma.course.findUnique({
       where: {
@@ -47,7 +51,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -56,7 +60,7 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { courseId } = params;
+    const { courseId } = await params;
     const body = await req.json();
     const validatedData = courseSchema.parse(body);
 
@@ -91,7 +95,7 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -100,7 +104,7 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { courseId } = params;
+    const { courseId } = await params;
 
     const existingCourse = await prisma.course.findUnique({
       where: {

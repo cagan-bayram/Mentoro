@@ -28,6 +28,7 @@ model User {
   expertise     String[]
   hourlyRate    Float?
   availability  Json?
+  averageRating Float?   @default(0)
 
   // Relations
   accounts      Account[]
@@ -35,6 +36,8 @@ model User {
   courses       Course[]    @relation("CourseCreator")
   enrollments   Enrollment[]
   reviews       Review[]
+  bookingReviews BookingReview[] @relation("ReviewStudent")
+  teachingReviews BookingReview[] @relation("ReviewTeacher")
   lessons       Lesson[]    @relation("LessonTeacher")
   bookings      Booking[]   @relation("BookingStudent")
   teachingBookings Booking[] @relation("BookingTeacher")
@@ -122,6 +125,21 @@ model Review {
   @@unique([userId, courseId])
 }
 
+model BookingReview {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String
+  createdAt DateTime @default(now())
+  bookingId String   @unique
+  teacherId String
+  studentId String
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  teacher   User     @relation("ReviewTeacher", fields: [teacherId], references: [id])
+  student   User     @relation("ReviewStudent", fields: [studentId], references: [id])
+
+  @@unique([bookingId, studentId])
+}
+
 model Booking {
   id        String   @id @default(cuid())
   startTime DateTime
@@ -136,6 +154,22 @@ model Booking {
   lesson    Lesson   @relation(fields: [lessonId], references: [id])
   student   User     @relation("BookingStudent", fields: [studentId], references: [id])
   teacher   User     @relation("BookingTeacher", fields: [teacherId], references: [id])
+  review    BookingReview?
+  payment   Payment?
+}
+
+model Payment {
+  id                     String        @id @default(cuid())
+  bookingId              String        @unique
+  amount                 Float
+  currency               String        @default("usd")
+  status                 PaymentStatus @default(PENDING)
+  stripeSessionId        String?
+  stripePaymentIntentId  String?
+  createdAt              DateTime      @default(now())
+  updatedAt              DateTime      @updatedAt
+
+  booking                Booking       @relation(fields: [bookingId], references: [id])
 }
 
 enum UserRole {
@@ -149,4 +183,11 @@ enum BookingStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
 } 

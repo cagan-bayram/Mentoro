@@ -39,6 +39,9 @@ export default function LessonsPage() {
     minPrice: '',
     maxPrice: '',
     duration: '',
+    subject: '',
+    teacherExpertise: '',
+    sortBy: 'newest',
   });
 
   useEffect(() => {
@@ -75,7 +78,26 @@ export default function LessonsPage() {
     }
 
     // For now, redirect to a booking page (we'll create this next)
-    router.push(`/lessons/${lessonId}/book`);
+    router.push(`/students/lessons/lessons/${lessonId}/book`);
+  };
+
+  // Get unique subjects and expertise for filter options
+  const getUniqueSubjects = () => {
+    const subjects = new Set<string>();
+    lessons.forEach(lesson => {
+      if (lesson.course?.title) {
+        subjects.add(lesson.course.title);
+      }
+    });
+    return Array.from(subjects).sort();
+  };
+
+  const getUniqueExpertise = () => {
+    const expertise = new Set<string>();
+    lessons.forEach(lesson => {
+      lesson.teacher.expertise.forEach(exp => expertise.add(exp));
+    });
+    return Array.from(expertise).sort();
   };
 
   const filteredLessons = lessons.filter(lesson => {
@@ -86,9 +108,45 @@ export default function LessonsPage() {
     const matchesMinPrice = !filters.minPrice || lesson.price >= parseFloat(filters.minPrice);
     const matchesMaxPrice = !filters.maxPrice || lesson.price <= parseFloat(filters.maxPrice);
     const matchesDuration = !filters.duration || lesson.duration === parseInt(filters.duration);
+    const matchesSubject = !filters.subject || lesson.course?.title === filters.subject;
+    const matchesExpertise = !filters.teacherExpertise || 
+                           lesson.teacher.expertise.includes(filters.teacherExpertise);
 
-    return matchesSearch && matchesMinPrice && matchesMaxPrice && matchesDuration;
+    return matchesSearch && matchesMinPrice && matchesMaxPrice && matchesDuration && 
+           matchesSubject && matchesExpertise;
+  }).sort((a, b) => {
+    switch (filters.sortBy) {
+      case 'price-low':
+        return a.price - b.price;
+      case 'price-high':
+        return b.price - a.price;
+      case 'duration':
+        return a.duration - b.duration;
+      case 'newest':
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case 'oldest':
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      default:
+        return 0;
+    }
   });
+
+  const clearFilters = () => {
+    setFilters({
+      search: '',
+      minPrice: '',
+      maxPrice: '',
+      duration: '',
+      subject: '',
+      teacherExpertise: '',
+      sortBy: 'newest',
+    });
+  };
+
+  const hasActiveFilters = () => {
+    return filters.search || filters.minPrice || filters.maxPrice || 
+           filters.duration || filters.subject || filters.teacherExpertise;
+  };
 
   if (status === 'loading' || loading) {
     return (
@@ -127,8 +185,18 @@ export default function LessonsPage() {
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Filters</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+            {hasActiveFilters() && (
+              <button
+                onClick={clearFilters}
+                className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+              >
+                Clear all filters
+              </button>
+            )}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
                 Search
@@ -187,6 +255,69 @@ export default function LessonsPage() {
                 <option value="120">120 minutes</option>
               </select>
             </div>
+            <div>
+              <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                Subject
+              </label>
+              <select
+                id="subject"
+                value={filters.subject}
+                onChange={(e) => setFilters(prev => ({ ...prev, subject: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Any subject</option>
+                {getUniqueSubjects().map((subject) => (
+                  <option key={subject} value={subject}>
+                    {subject}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="teacherExpertise" className="block text-sm font-medium text-gray-700 mb-2">
+                Teacher Expertise
+              </label>
+              <select
+                id="teacherExpertise"
+                value={filters.teacherExpertise}
+                onChange={(e) => setFilters(prev => ({ ...prev, teacherExpertise: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Any expertise</option>
+                {getUniqueExpertise().map((expertise) => (
+                  <option key={expertise} value={expertise}>
+                    {expertise}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label htmlFor="sortBy" className="block text-sm font-medium text-gray-700 mb-2">
+                Sort By
+              </label>
+              <select
+                id="sortBy"
+                value={filters.sortBy}
+                onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="newest">Newest</option>
+                <option value="oldest">Oldest</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="duration">Duration</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Summary */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <p className="text-gray-600">
+              Showing {filteredLessons.length} of {lessons.length} lessons
+              {hasActiveFilters() && ' (filtered)'}
+            </p>
           </div>
         </div>
 
@@ -253,7 +384,7 @@ export default function LessonsPage() {
                   
                   <div className="flex space-x-2">
                     <Link
-                      href={`/lessons/${lesson.id}`}
+                      href={`/students/lessons/lessons/${lesson.id}`}
                       className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded text-sm text-center hover:bg-gray-200 transition-colors"
                     >
                       View Details

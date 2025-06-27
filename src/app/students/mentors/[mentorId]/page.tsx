@@ -34,10 +34,10 @@ interface MentorProfile {
   lessons: Lesson[];
 }
 
-export default function MentorProfilePage({ params }: { params: { mentorId: string } }) {
+export default async function MentorProfilePage({ params }: { params: Promise<{ mentorId: string }> }) {
+  const { mentorId } = await params;
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { mentorId } = params;
 
   const [mentor, setMentor] = useState<MentorProfile | null>(null);
   const [loading, setLoading] = useState(true);

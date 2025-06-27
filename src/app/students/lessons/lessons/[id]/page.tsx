@@ -63,7 +63,7 @@ export default function LessonDetailPage({ params }: { params: { id: string } })
   };
 
   const handleBookLesson = () => {
-    router.push(`/lessons/${params.id}/book`);
+    router.push(`/students/lessons/lessons/${params.id}/book`);
   };
 
   if (status === 'loading' || loading) {
@@ -83,7 +83,7 @@ export default function LessonDetailPage({ params }: { params: { id: string } })
         <div className="text-center">
           <p className="text-red-600 mb-4">{error || 'Lesson not found'}</p>
           <Link
-            href="/lessons"
+            href="/students/lessons"
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
           >
             Back to Lessons
@@ -98,7 +98,7 @@ export default function LessonDetailPage({ params }: { params: { id: string } })
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <Link
-            href="/lessons"
+            href="/students/lessons"
             className="text-blue-600 hover:text-blue-700 mb-4 inline-flex items-center"
           >
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,7 +194,7 @@ export default function LessonDetailPage({ params }: { params: { id: string } })
                   {lesson.isPublished ? 'Book This Lesson' : 'Lesson Not Available'}
                 </button>
                 <Link
-                  href={`/mentors/${lesson.teacher.id}`}
+                  href={`/students/mentors/${lesson.teacher.id}`}
                   className="flex-1 bg-gray-100 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 text-center font-medium"
                 >
                   View Teacher Profile

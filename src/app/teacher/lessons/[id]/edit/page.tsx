@@ -4,10 +4,16 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 interface Course {
   id: string;
   title: string;
+}
+
+interface Booking {
+  id: string;
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
 }
 
 interface Lesson {
@@ -18,6 +24,7 @@ interface Lesson {
   duration: number;
   isPublished: boolean;
   courseId?: string;
+  bookings: Booking[];
 }
 
 export default function EditLessonPage({ params }: { params: { id: string } }) {
@@ -90,6 +97,10 @@ export default function EditLessonPage({ params }: { params: { id: string } }) {
     }
   };
 
+  const canDelete = !lesson?.bookings.some(
+    (booking) => booking.status === 'PENDING' || booking.status === 'CONFIRMED'
+  );
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -129,6 +140,14 @@ export default function EditLessonPage({ params }: { params: { id: string } }) {
       ...prev,
       [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value,
     }));
+  };
+
+  const handleDelete = async () => {
+    if (!canDelete) {
+      toast.error('Cannot delete lesson with active bookings.');
+      return;
+    }
+    // ... existing code ...
   };
 
   if (status === 'loading' || loading) {

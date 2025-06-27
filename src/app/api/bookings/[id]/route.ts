@@ -56,6 +56,7 @@ export async function GET(
             image: true,
           },
         },
+        payment: true,
       },
     });
 
@@ -184,6 +185,7 @@ export async function PUT(
             image: true,
           },
         },
+        payment: true,
       },
     });
 

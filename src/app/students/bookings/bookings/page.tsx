@@ -269,7 +269,7 @@ export default function BookingsPage() {
             </p>
             {session?.user.role === 'STUDENT' && (
               <Link
-                href="/lessons"
+                href="/students/lessons"
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Browse Lessons
@@ -351,7 +351,7 @@ export default function BookingsPage() {
 
                   <div className="flex space-x-2">
                     <Link
-                      href={`/bookings/${booking.id}`}
+                      href={`/students/bookings/bookings/${booking.id}`}
                       className="flex-1 bg-gray-100 text-gray-700 px-3 py-2 rounded text-sm text-center hover:bg-gray-200 transition-colors"
                     >
                       View Details

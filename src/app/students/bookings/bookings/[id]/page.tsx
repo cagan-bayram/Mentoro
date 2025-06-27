@@ -48,6 +48,8 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [paying, setPaying] = useState(false);
+  const [payError, setPayError] = useState('');
 
   useEffect(() => {
     if (status === 'loading') return;
@@ -121,6 +123,26 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to cancel booking');
       console.error('Error cancelling booking:', err);
+    }
+  };
+
+  const handlePay = async () => {
+    setPaying(true);
+    setPayError('');
+    try {
+      const { id } = await params;
+      const res = await fetch('/api/payments/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bookingId: id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to create checkout session');
+      window.location.href = data.url;
+    } catch (err) {
+      setPayError(err instanceof Error ? err.message : 'Payment failed');
+    } finally {
+      setPaying(false);
     }
   };
 
@@ -346,6 +368,21 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
                   >
                     Mark as Completed
                   </button>
+                )}
+
+                {session?.user.role === 'STUDENT' &&
+                  (booking.status === 'PENDING' || booking.status === 'CONFIRMED') &&
+                  !booking.payment && (
+                    <button
+                      onClick={handlePay}
+                      disabled={paying}
+                      className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 font-medium"
+                    >
+                      {paying ? 'Redirecting...' : 'Pay for Lesson'}
+                    </button>
+                  )}
+                {payError && (
+                  <span className="text-red-600 ml-4 self-center">{payError}</span>
                 )}
               </div>
             </div>
