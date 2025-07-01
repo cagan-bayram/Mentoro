@@ -68,6 +68,7 @@ export async function GET(request: NextRequest) {
             image: true,
           },
         },
+        payment: true,
       },
       orderBy: {
         startTime: 'desc',

@@ -25,6 +25,9 @@ interface Booking {
       email: string;
     };
   };
+  payment?: {
+    status: "PENDING" | "PAID" | "FAILED";
+  };
 }
 
 export default function StudentBookingsPage() {
@@ -159,9 +162,14 @@ export default function StudentBookingsPage() {
             <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
             <p className="mt-2 text-gray-600">View and manage your lesson bookings</p>
           </div>
-          <Link href="/students/bookings/create">
-            <Button>Book New Lesson</Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/students/bookings/create">
+              <Button>Book New Lesson</Button>
+            </Link>
+            <Link href="/students/payments">
+              <Button variant="outline">Payment History</Button>
+            </Link>
+          </div>
         </div>
 
         {bookings.length === 0 ? (
@@ -198,13 +206,10 @@ export default function StudentBookingsPage() {
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg">{booking.lesson.title}</CardTitle>
-                    <span
-                      className={`px-2 py-1 text-xs rounded-full ${getStatusColor(
-                        booking.status
-                      )}`}
-                    >
-                      {booking.status}
-                    </span>
+                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(booking.status)}`}>{booking.status}</span>
+                    {booking.payment && (
+                      <span className={`ml-2 px-2 py-1 text-xs rounded-full ${getStatusColor(booking.payment.status)}`}>{booking.payment.status}</span>
+                    )}
                   </div>
                 </CardHeader>
                 <CardContent>

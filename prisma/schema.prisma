@@ -151,7 +151,7 @@ model Booking {
   lessonId  String
   studentId String
   teacherId String
-  lesson    Lesson   @relation(fields: [lessonId], references: [id])
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   student   User     @relation("BookingStudent", fields: [studentId], references: [id])
   teacher   User     @relation("BookingTeacher", fields: [teacherId], references: [id])
   review    BookingReview?

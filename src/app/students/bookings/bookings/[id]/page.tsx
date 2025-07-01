@@ -40,6 +40,10 @@ interface Booking {
     email: string;
     image: string;
   };
+  payment?: {
+    status: 'PENDING' | 'PAID' | 'FAILED';
+    stripeSessionId?: string;
+  };
 }
 
 export default function BookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -386,6 +390,22 @@ export default function BookingDetailPage({ params }: { params: Promise<{ id: st
                 )}
               </div>
             </div>
+
+            {booking.payment && (
+              <div className="mt-4">
+                <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(booking.payment.status)}`}>Payment: {booking.payment.status}</span>
+                {booking.payment.status === 'PAID' && booking.payment.stripeSessionId && (
+                  <a
+                    href={`https://dashboard.stripe.com/payments/${booking.payment.stripeSessionId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-4 text-blue-600 underline"
+                  >
+                    View Stripe Receipt
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

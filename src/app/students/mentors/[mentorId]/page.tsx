@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Course {
   id: string;
@@ -34,9 +35,10 @@ interface MentorProfile {
   lessons: Lesson[];
 }
 
-export default async function MentorProfilePage({ params }: { params: Promise<{ mentorId: string }> }) {
-  const { mentorId } = await params;
+export default function MentorProfilePage() {
   const router = useRouter();
+  const params = useParams();
+  const mentorId = typeof params.mentorId === 'string' ? params.mentorId : Array.isArray(params.mentorId) ? params.mentorId[0] : '';
   const { data: session, status } = useSession();
 
   const [mentor, setMentor] = useState<MentorProfile | null>(null);
@@ -77,6 +79,18 @@ export default async function MentorProfilePage({ params }: { params: Promise<{ 
       fetchMentor();
     }
   }, [mentorId, session, status, router]);
+
+  const handleBookOrContact = () => {
+    if (!mentor) return;
+    if (mentor.lessons.length === 1) {
+      toast.info(`Redirecting to the only lesson offered by ${mentor.name}`);
+      router.push(`/students/lessons/lessons/${mentor.lessons[0].id}/book`);
+    } else if (mentor.lessons.length > 1) {
+      router.push(`/students/mentors/${mentorId}/lessons`);
+    } else {
+      toast.error("This mentor does not have any bookable lessons yet.");
+    }
+  };
 
   if (status === "loading" || loading) {
     return (
@@ -200,7 +214,7 @@ export default async function MentorProfilePage({ params }: { params: Promise<{ 
 
           <div className="mt-8 text-center">
             <button
-              // This button will eventually lead to booking a lesson or contacting the mentor
+              onClick={handleBookOrContact}
               className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
               Contact {mentor.name} / Book a Lesson

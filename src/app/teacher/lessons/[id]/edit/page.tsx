@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -27,7 +27,8 @@ interface Lesson {
   bookings: Booking[];
 }
 
-export default function EditLessonPage({ params }: { params: { id: string } }) {
+export default function EditLessonPage() {
+  const params = useParams();
   const { data: session, status } = useSession();
   const router = useRouter();
   const [courses, setCourses] = useState<Course[]>([]);
@@ -97,7 +98,7 @@ export default function EditLessonPage({ params }: { params: { id: string } }) {
     }
   };
 
-  const canDelete = !lesson?.bookings.some(
+  const canDelete = !lesson?.bookings?.some(
     (booking) => booking.status === 'PENDING' || booking.status === 'CONFIRMED'
   );
 

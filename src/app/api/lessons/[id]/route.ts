@@ -170,17 +170,27 @@ export async function DELETE(
       );
     }
 
-    // Check if there are any bookings for this lesson
-    const bookings = await prisma.booking.findMany({
-      where: { lessonId: id },
+    // Check if there are any active bookings for this lesson
+    const activeBookings = await prisma.booking.findMany({
+      where: {
+        lessonId: id,
+        status: {
+          in: ['PENDING', 'CONFIRMED'],
+        },
+      },
     });
 
-    if (bookings.length > 0) {
+    if (activeBookings.length > 0) {
       return NextResponse.json(
-        { error: 'Cannot delete lesson with existing bookings' },
+        { error: 'Cannot delete lesson with active bookings' },
         { status: 400 }
       );
     }
+
+    // Delete all bookings for this lesson (cancelled/completed)
+    await prisma.booking.deleteMany({
+      where: { lessonId: id },
+    });
 
     await prisma.lesson.delete({
       where: { id },
