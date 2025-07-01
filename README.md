@@ -1,5 +1,12 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## About
+
+Mentoro is an online mentoring platform currently in early development. The
+codebase includes authentication, a basic calendar component and a simple review
+form, but many planned features are still missing. See the [project roadmap](./ROADMAP.md)
+for a list of upcoming tasks.
+
 ## Getting Started
 
 First, run the development server:
@@ -34,3 +41,9 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Contributing
+
+Contributions are welcome! If you would like to help implement any of the items
+in the [roadmap](./ROADMAP.md) feel free to open a pull request. Please run
+`npm run lint` before submitting changes.
