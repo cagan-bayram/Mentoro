@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -10,6 +10,38 @@ export default function Header() {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  const [notifLoading, setNotifLoading] = useState(false);
+
+  const fetchNotifications = async () => {
+    setNotifLoading(true);
+    try {
+      const res = await fetch('/api/notifications?limit=10');
+      const data = await res.json();
+      setNotifications(data);
+      setUnreadCount(data.filter((n: any) => !n.read).length);
+    } catch (err) {
+      // ignore
+    } finally {
+      setNotifLoading(false);
+    }
+  };
+
+  const handleNotifClick = async () => {
+    setIsNotifOpen((open) => !open);
+    if (!isNotifOpen) {
+      await fetchNotifications();
+    }
+  };
+
+  const handleNotifItemClick = async (id: string, link: string | null) => {
+    await fetch(`/api/notifications/${id}`, { method: 'PATCH' });
+    setNotifications((prev: any) => prev.map((n: any) => n.id === id ? { ...n, read: true } : n));
+    setUnreadCount((prev) => Math.max(0, prev - 1));
+    if (link) router.push(link);
+  };
 
   const handleSignOut = async () => {
     await signOut({ callbackUrl: '/' });
@@ -81,6 +113,43 @@ export default function Header() {
               Calendar
             </Link>
           </nav>
+
+          {/* Notification Bell */}
+          <div className="relative mr-4">
+            <button
+              onClick={handleNotifClick}
+              className="relative p-2 rounded-full text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Notifications"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+            {isNotifOpen && (
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg py-2 z-50 border max-h-96 overflow-y-auto">
+                <div className="px-4 py-2 font-semibold text-gray-700 border-b">Notifications</div>
+                {notifLoading ? (
+                  <div className="px-4 py-4 text-gray-500">Loading...</div>
+                ) : notifications.length === 0 ? (
+                  <div className="px-4 py-4 text-gray-500">No notifications</div>
+                ) : notifications.map((notif: any) => (
+                  <button
+                    key={notif.id}
+                    onClick={() => handleNotifItemClick(notif.id, notif.link)}
+                    className={`block w-full text-left px-4 py-3 text-sm ${notif.read ? 'text-gray-500' : 'text-gray-900 font-medium bg-blue-50'} hover:bg-blue-100`}
+                  >
+                    {notif.message}
+                    <span className="block text-xs text-gray-400 mt-1">{new Date(notif.createdAt).toLocaleString()}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* User Menu */}
           <div className="flex items-center">

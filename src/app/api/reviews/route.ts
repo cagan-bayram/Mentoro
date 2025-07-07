@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
       where.bookingId = bookingId;
     }
 
-    const reviews = await prisma.review.findMany({
+    const reviews = await prisma.bookingReview.findMany({
       where,
       include: {
         student: {
@@ -114,7 +114,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if a review already exists for this booking
-    const existingReview = await prisma.review.findFirst({
+    const existingReview = await prisma.bookingReview.findFirst({
       where: {
         bookingId: bookingId,
         studentId: session.user.id,
@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the review
-    const review = await prisma.review.create({
+    const review = await prisma.bookingReview.create({
       data: {
         rating,
         comment,
@@ -167,12 +167,12 @@ export async function POST(request: NextRequest) {
     });
 
     // Update teacher's average rating
-    const teacherReviews = await prisma.review.findMany({
+    const teacherReviews = await prisma.bookingReview.findMany({
       where: { teacherId },
       select: { rating: true },
     });
 
-    const averageRating = teacherReviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / teacherReviews.length;
+    const averageRating = teacherReviews.length > 0 ? teacherReviews.reduce((sum: number, review: { rating: number }) => sum + review.rating, 0) / teacherReviews.length : 0;
 
     await prisma.user.update({
       where: { id: teacherId },

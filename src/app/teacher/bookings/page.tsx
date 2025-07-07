@@ -173,54 +173,26 @@ export default function TeacherBookingsPage() {
         ) : (
           <div className="grid gap-6">
             {bookings.map((booking) => (
-              <div key={booking.id} className="rounded-lg border bg-white p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between">
-                <div>
-                  <div className="flex items-center gap-4 mb-2">
-                    <span className="text-lg font-semibold text-gray-900">{booking.lesson.title}</span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      booking.status === "PENDING"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : booking.status === "CONFIRMED"
-                        ? "bg-green-100 text-green-800"
-                        : booking.status === "CANCELLED"
-                        ? "bg-red-100 text-red-800"
-                        : booking.status === "COMPLETED"
-                        ? "bg-blue-100 text-blue-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}>{booking.status}</span>
-                  </div>
-                  <div className="text-sm text-gray-700 mb-1">Student: {booking.student.name} ({booking.student.email})</div>
-                  <div className="text-sm text-gray-700 mb-1">Start: {new Date(booking.startTime).toLocaleString()}</div>
-                  <div className="text-sm text-gray-700 mb-1">End: {new Date(booking.endTime).toLocaleString()}</div>
-                  <div className="text-sm text-gray-700 mb-1">Price: ${booking.price}</div>
+              <Link key={booking.id} href={`/teacher/bookings/${booking.id}`} className="block rounded-lg border bg-white p-6 shadow-sm hover:bg-gray-50 transition-colors">
+                <div className="flex items-center gap-4 mb-2">
+                  <span className="text-lg font-semibold text-gray-900">{booking.lesson.title}</span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    booking.status === "PENDING"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : booking.status === "CONFIRMED"
+                      ? "bg-green-100 text-green-800"
+                      : booking.status === "CANCELLED"
+                      ? "bg-red-100 text-red-800"
+                      : booking.status === "COMPLETED"
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-gray-100 text-gray-800"
+                  }`}>{booking.status}</span>
                 </div>
-                <div className="flex gap-2 mt-4 md:mt-0">
-                  {booking.status === "PENDING" && (
-                    <>
-                      <button
-                        onClick={() => handleStatusUpdate(booking.id, "CONFIRMED")}
-                        className="bg-green-100 text-green-700 px-3 py-2 rounded text-sm hover:bg-green-200 transition-colors"
-                      >
-                        Confirm
-                      </button>
-                      <button
-                        onClick={() => handleStatusUpdate(booking.id, "CANCELLED")}
-                        className="bg-red-100 text-red-700 px-3 py-2 rounded text-sm hover:bg-red-200 transition-colors"
-                      >
-                        Decline
-                      </button>
-                    </>
-                  )}
-                  {booking.status === "CONFIRMED" && (
-                    <button
-                      onClick={() => handleStatusUpdate(booking.id, "COMPLETED")}
-                      className="bg-blue-100 text-blue-700 px-3 py-2 rounded text-sm hover:bg-blue-200 transition-colors"
-                    >
-                      Mark Complete
-                    </button>
-                  )}
-                </div>
-              </div>
+                <div className="text-sm text-gray-700 mb-1">Student: {booking.student.name} ({booking.student.email})</div>
+                <div className="text-sm text-gray-700 mb-1">Start: {new Date(booking.startTime).toLocaleString()}</div>
+                <div className="text-sm text-gray-700 mb-1">End: {new Date(booking.endTime).toLocaleString()}</div>
+                <div className="text-sm text-gray-700 mb-1">Price: ${booking.price}</div>
+              </Link>
             ))}
           </div>
         )}

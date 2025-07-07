@@ -31,16 +31,17 @@ model User {
   averageRating Float?   @default(0)
 
   // Relations
-  accounts      Account[]
-  sessions      Session[]
-  courses       Course[]    @relation("CourseCreator")
-  enrollments   Enrollment[]
-  reviews       Review[]
-  bookingReviews BookingReview[] @relation("ReviewStudent")
-  teachingReviews BookingReview[] @relation("ReviewTeacher")
-  lessons       Lesson[]    @relation("LessonTeacher")
-  bookings      Booking[]   @relation("BookingStudent")
-  teachingBookings Booking[] @relation("BookingTeacher")
+  accounts         Account[]
+  sessions         Session[]
+  courses          Course[]        @relation("CourseCreator")
+  enrollments      Enrollment[]
+  reviews          Review[]
+  bookingReviews   BookingReview[] @relation("ReviewStudent")
+  teachingReviews  BookingReview[] @relation("ReviewTeacher")
+  lessons          Lesson[]        @relation("LessonTeacher")
+  bookings         Booking[]       @relation("BookingStudent")
+  teachingBookings Booking[]       @relation("BookingTeacher")
+  notifications    Notification[]
 }
 
 model Account {
@@ -71,33 +72,33 @@ model Session {
 }
 
 model Course {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   title       String
   description String
   price       Float?
-  isPublished Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isPublished Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   creatorId   String
-  creator     User     @relation("CourseCreator", fields: [creatorId], references: [id])
+  creator     User         @relation("CourseCreator", fields: [creatorId], references: [id])
   lessons     Lesson[]
   enrollments Enrollment[]
   reviews     Review[]
 }
 
 model Lesson {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
   description String
   price       Float?
-  duration    Int      // in minutes
-  isPublished Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  duration    Int // in minutes
+  isPublished Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   courseId    String?
-  course      Course?  @relation(fields: [courseId], references: [id])
+  course      Course?   @relation(fields: [courseId], references: [id])
   teacherId   String
-  teacher     User     @relation("LessonTeacher", fields: [teacherId], references: [id])
+  teacher     User      @relation("LessonTeacher", fields: [teacherId], references: [id])
   bookings    Booking[]
 }
 
@@ -141,35 +142,52 @@ model BookingReview {
 }
 
 model Booking {
-  id        String   @id @default(cuid())
+  id        String         @id @default(cuid())
   startTime DateTime
   endTime   DateTime
-  status    BookingStatus @default(PENDING)
+  status    BookingStatus  @default(PENDING)
   price     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   lessonId  String
   studentId String
   teacherId String
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  student   User     @relation("BookingStudent", fields: [studentId], references: [id])
-  teacher   User     @relation("BookingTeacher", fields: [teacherId], references: [id])
+  lesson    Lesson         @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  student   User           @relation("BookingStudent", fields: [studentId], references: [id])
+  teacher   User           @relation("BookingTeacher", fields: [teacherId], references: [id])
   review    BookingReview?
   payment   Payment?
+
+  // --- Rescheduling fields ---
+  proposedStartTime     DateTime?
+  proposedEndTime       DateTime?
+  rescheduleRequestedBy String? // "STUDENT" or "TEACHER"
+  rescheduleStatus      RescheduleStatus? @default(NONE)
 }
 
 model Payment {
-  id                     String        @id @default(cuid())
-  bookingId              String        @unique
-  amount                 Float
-  currency               String        @default("usd")
-  status                 PaymentStatus @default(PENDING)
-  stripeSessionId        String?
-  stripePaymentIntentId  String?
-  createdAt              DateTime      @default(now())
-  updatedAt              DateTime      @updatedAt
+  id                    String        @id @default(cuid())
+  bookingId             String        @unique
+  amount                Float
+  currency              String        @default("usd")
+  status                PaymentStatus @default(PENDING)
+  stripeSessionId       String?
+  stripePaymentIntentId String?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 
-  booking                Booking       @relation(fields: [bookingId], references: [id])
+  booking Booking @relation(fields: [bookingId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // e.g. "BOOKING_CONFIRMED", "RESCHEDULE_REQUESTED", etc.
+  message   String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
 enum UserRole {
@@ -190,4 +208,12 @@ enum PaymentStatus {
   PAID
   FAILED
   REFUNDED
-} 
+}
+
+enum RescheduleStatus {
+  NONE // No reschedule in progress
+  REQUESTED // Reschedule proposed, awaiting response
+  ACCEPTED // Reschedule accepted
+  DECLINED // Reschedule declined
+  CANCELLED // Reschedule request cancelled
+}

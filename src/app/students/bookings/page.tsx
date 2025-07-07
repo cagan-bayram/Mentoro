@@ -202,68 +202,70 @@ export default function StudentBookingsPage() {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {bookings.map((booking) => (
-              <Card key={booking.id}>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg">{booking.lesson.title}</CardTitle>
-                    <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(booking.status)}`}>{booking.status}</span>
-                    {booking.payment && (
-                      <span className={`ml-2 px-2 py-1 text-xs rounded-full ${getStatusColor(booking.payment.status)}`}>{booking.payment.status}</span>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div>
-                      <p className="text-sm text-gray-600">Teacher</p>
-                      <p className="font-medium">{booking.lesson.teacher.name}</p>
+              <Link key={booking.id} href={`/students/bookings/bookings/${booking.id}`}>
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg">{booking.lesson.title}</CardTitle>
+                      <span className={`px-2 py-1 text-xs rounded-full ${getStatusColor(booking.status)}`}>{booking.status}</span>
+                      {booking.payment && (
+                        <span className={`ml-2 px-2 py-1 text-xs rounded-full ${getStatusColor(booking.payment.status)}`}>{booking.payment.status}</span>
+                      )}
                     </div>
-
-                    <div>
-                      <p className="text-sm text-gray-600">Date & Time</p>
-                      <p className="font-medium">
-                        {formatDate(booking.requestedDate)} at{" "}
-                        {formatTime(booking.requestedTime)}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-sm text-gray-600">Price</p>
-                      <p className="font-medium">${booking.lesson.price}</p>
-                    </div>
-
-                    <div>
-                      <p className="text-sm text-gray-600">Duration</p>
-                      <p className="font-medium">{booking.lesson.duration} minutes</p>
-                    </div>
-
-                    {booking.message && (
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
                       <div>
-                        <p className="text-sm text-gray-600">Message</p>
-                        <p className="text-sm">{booking.message}</p>
+                        <p className="text-sm text-gray-600">Teacher</p>
+                        <p className="font-medium">{booking.lesson.teacher.name}</p>
                       </div>
-                    )}
 
-                    <div>
-                      <p className="text-sm text-gray-600">Booked on</p>
-                      <p className="text-sm">{formatDate(booking.createdAt)}</p>
+                      <div>
+                        <p className="text-sm text-gray-600">Date & Time</p>
+                        <p className="font-medium">
+                          {formatDate(booking.requestedDate)} at{" "}
+                          {formatTime(booking.requestedTime)}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-sm text-gray-600">Price</p>
+                        <p className="font-medium">${booking.lesson.price}</p>
+                      </div>
+
+                      <div>
+                        <p className="text-sm text-gray-600">Duration</p>
+                        <p className="font-medium">{booking.lesson.duration} minutes</p>
+                      </div>
+
+                      {booking.message && (
+                        <div>
+                          <p className="text-sm text-gray-600">Message</p>
+                          <p className="text-sm">{booking.message}</p>
+                        </div>
+                      )}
+
+                      <div>
+                        <p className="text-sm text-gray-600">Booked on</p>
+                        <p className="text-sm">{formatDate(booking.createdAt)}</p>
+                      </div>
+
+                      {booking.status === "PENDING" && (
+                        <div className="pt-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleCancelBooking(booking.id)}
+                            className="w-full"
+                          >
+                            Cancel Booking
+                          </Button>
+                        </div>
+                      )}
                     </div>
-
-                    {booking.status === "PENDING" && (
-                      <div className="pt-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCancelBooking(booking.id)}
-                          className="w-full"
-                        >
-                          Cancel Booking
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}
