@@ -16,7 +16,7 @@ const courseSchema = z.object({
 
 export async function GET(
   request: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   const session = await getServerSession(authOptions);
 
@@ -29,7 +29,7 @@ export async function GET(
   }
 
   try {
-    const { courseId } = params;
+    const { courseId } = await params;
 
     const course = await prisma.course.findUnique({
       where: {
@@ -51,7 +51,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -60,7 +60,7 @@ export async function PATCH(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { courseId } = params;
+    const { courseId } = await params;
     const body = await req.json();
     const validatedData = courseSchema.parse(body);
 
@@ -95,7 +95,7 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: Promise<{ courseId: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -104,7 +104,7 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const { courseId } = params;
+    const { courseId } = await params;
 
     const existingCourse = await prisma.course.findUnique({
       where: {
