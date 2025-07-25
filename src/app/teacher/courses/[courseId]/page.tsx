@@ -27,7 +27,7 @@ interface CourseData extends CourseForm {
   creatorId: string;
 }
 
-export default function CourseDetailPage({ params }: { params: { courseId: string } }) {
+export default function CourseDetailPage({ params }: any) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const { courseId } = params;

@@ -28,7 +28,7 @@ interface Lesson {
   };
 }
 
-export default function LessonDetailPage({ params }: { params: { id: string } }) {
+export default function LessonDetailPage({ params }: any) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [lesson, setLesson] = useState<Lesson | null>(null);

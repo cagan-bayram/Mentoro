@@ -190,7 +190,7 @@ export default function CalendarPage() {
           <div className="space-y-6">
             {/* Today's Bookings */}
             <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Today's Schedule</h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Today&apos;s Schedule</h2>
               {todayBookings.length > 0 ? (
                 <div className="space-y-3">
                   {todayBookings.map(booking => (

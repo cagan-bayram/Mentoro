@@ -56,7 +56,7 @@ interface Booking {
   rescheduleStatus?: "NONE" | "REQUESTED" | "ACCEPTED" | "DECLINED" | "CANCELLED" | null;
 }
 
-export default function TeacherBookingDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function TeacherBookingDetailPage({ params }: any) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [booking, setBooking] = useState<Booking | null>(null);

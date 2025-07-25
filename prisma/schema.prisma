@@ -42,6 +42,8 @@ model User {
   bookings         Booking[]       @relation("BookingStudent")
   teachingBookings Booking[]       @relation("BookingTeacher")
   notifications    Notification[]
+  sentMessages     Message[]       @relation("MessageSender")
+  receivedMessages Message[]       @relation("MessageRecipient")
 }
 
 model Account {
@@ -188,6 +190,18 @@ model Notification {
   link      String?
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  senderId    String
+  recipientId String
+  content     String
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  sender      User     @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  recipient   User     @relation("MessageRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {
