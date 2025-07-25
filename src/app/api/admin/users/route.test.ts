@@ -25,6 +25,12 @@ describe('GET /api/admin/users', () => {
     jest.clearAllMocks();
   });
 
+  it('returns 401 for unauthenticated user', async () => {
+    mockGetServerSession.mockResolvedValue(null);
+    const res = await GET();
+    expect(res.status).toBe(401);
+  });
+
   it('returns 401 for non-admin user', async () => {
     mockGetServerSession.mockResolvedValue({ user: { role: 'STUDENT' } });
     const res = await GET();

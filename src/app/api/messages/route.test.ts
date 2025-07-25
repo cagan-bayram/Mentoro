@@ -33,6 +33,13 @@ describe('Messages API', () => {
     expect(res.status).toBe(401);
   });
 
+  it('rejects unauthenticated message creation', async () => {
+    mockGetServerSession.mockResolvedValue(null);
+    const req = { json: jest.fn().mockResolvedValue({ content: 'hi' }) } as any;
+    const res = await POST(req);
+    expect(res.status).toBe(401);
+  });
+
   it('returns messages in chronological order', async () => {
     mockGetServerSession.mockResolvedValue({ user: { id: '1' } });
     const messages = [
