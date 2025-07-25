@@ -6,10 +6,10 @@ import { prisma } from '@/lib/prisma';
 // GET /api/lessons/[id] - Get a single lesson
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const lesson = await prisma.lesson.findUnique({
       where: { id },
       include: {
@@ -53,10 +53,10 @@ export async function GET(
 // PUT /api/lessons/[id] - Update a lesson
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {
@@ -142,10 +142,10 @@ export async function PUT(
 // DELETE /api/lessons/[id] - Delete a lesson
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {
