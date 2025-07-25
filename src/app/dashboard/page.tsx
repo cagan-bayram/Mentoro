@@ -113,10 +113,11 @@ export default function Dashboard() {
 
         {/* Analytics Section */}
         <div className="mb-8">
-          <Analytics 
-            bookings={bookings} 
+          <Analytics
+            bookings={bookings}
             lessons={lessons}
             userRole={session.user.role as 'TEACHER' | 'STUDENT'}
+            userId={session.user.id}
           />
         </div>
 

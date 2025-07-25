@@ -291,13 +291,18 @@ export default function CalendarPage() {
                   </>
                 ) : (
                   <>
-                    <Link
-                      href="/teacher/lessons"
-                      className="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      Manage Lessons
-                    </Link>
-                    {/* Bookings page for teachers coming soon */}
+                  <Link
+                    href="/teacher/lessons"
+                    className="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Manage Lessons
+                  </Link>
+                  <Link
+                    href="/teacher/bookings"
+                    className="block w-full text-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    View Bookings
+                  </Link>
                   </>
                 )}
               </div>
