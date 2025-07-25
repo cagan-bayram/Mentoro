@@ -27,7 +27,7 @@ interface Lesson {
   };
 }
 
-export default function BookLessonPage({ params }: { params: Promise<{ id: string }> }) {
+export default function BookLessonPage({ params }: any) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [lessonId, setLessonId] = useState<string>('');

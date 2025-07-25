@@ -14,7 +14,8 @@ This document lists planned improvements to address known gaps in the applicatio
 
 ## 3. Notifications & Communication
 - Send email or in-app notifications for bookings and cancellations.
-- Add a simple chat feature so students and mentors can communicate.
+- Add a simple chat feature so students and mentors can communicate. (basic
+  messaging endpoint implemented)
 
 ## 4. Reviews & Ratings
 - Allow students to leave a rating and comment after a completed lesson.
@@ -24,7 +25,7 @@ This document lists planned improvements to address known gaps in the applicatio
 - Improve mobile layouts and consider a PWA for offline support.
 
 ## 6. Admin Panel
-- Build an admin dashboard for managing users, lessons and resolving disputes.
+- Build an admin dashboard for managing users, lessons and resolving disputes. (initial page added)
 
 ## 7. User Experience
 - Create onboarding tutorials and helpful error messages.

@@ -2,7 +2,7 @@ import "next-auth";
 
 declare module "next-auth" {
   interface User {
-    role?: "STUDENT" | "TEACHER";
+    role?: "STUDENT" | "TEACHER" | "ADMIN";
   }
 
   interface Session {

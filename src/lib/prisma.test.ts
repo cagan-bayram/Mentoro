@@ -1,3 +1,4 @@
+jest.mock('@prisma/client', () => ({ PrismaClient: jest.fn(() => ({})) }));
 import { prisma } from './prisma';
 
 describe('prisma', () => {

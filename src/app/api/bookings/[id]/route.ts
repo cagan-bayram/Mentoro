@@ -7,10 +7,10 @@ import { sendEmail } from '@/lib/email';
 // GET /api/bookings/[id] - Get a single booking
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {
@@ -89,10 +89,10 @@ export async function GET(
 // PUT /api/bookings/[id] - Update booking status
 export async function PUT(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {
@@ -458,10 +458,10 @@ export async function PUT(
 // DELETE /api/bookings/[id] - Cancel booking
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
     const session = await getServerSession(authOptions);
     
     if (!session?.user?.id) {

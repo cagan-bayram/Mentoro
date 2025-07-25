@@ -87,7 +87,7 @@ export default function TeacherCoursesPage() {
 
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {courses.length === 0 ? (
-            <p className="text-gray-600">You haven't created any courses yet.</p>
+            <p className="text-gray-600">You haven&apos;t created any courses yet.</p>
           ) : (
             courses.map((course) => (
               <div key={course.id} className="overflow-hidden rounded-lg bg-white shadow">

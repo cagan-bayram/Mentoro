@@ -4,8 +4,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 Mentoro is an online mentoring platform currently in early development. The
 codebase includes authentication, a basic calendar component and a simple review
-form, but many planned features are still missing. See the [project roadmap](./ROADMAP.md)
-for a list of upcoming tasks.
+form. Initial versions of an admin dashboard and direct messaging have recently
+been added. See the [project roadmap](./ROADMAP.md) for a list of upcoming
+tasks.
 
 ## Getting Started
 
@@ -46,4 +47,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 Contributions are welcome! If you would like to help implement any of the items
 in the [roadmap](./ROADMAP.md) feel free to open a pull request. Please run
-`npm run lint` before submitting changes.
+`npm run lint` (which invokes `eslint .`) before submitting changes.
