@@ -6,9 +6,10 @@ interface AnalyticsProps {
   bookings: any[];
   lessons?: any[];
   userRole: 'TEACHER' | 'STUDENT';
+  userId: string;
 }
 
-export default function Analytics({ bookings, lessons = [], userRole }: AnalyticsProps) {
+export default function Analytics({ bookings, lessons = [], userRole, userId }: AnalyticsProps) {
   const [stats, setStats] = useState({
     totalBookings: 0,
     completedBookings: 0,
@@ -23,9 +24,9 @@ export default function Analytics({ bookings, lessons = [], userRole }: Analytic
 
   useEffect(() => {
     calculateStats();
-  }, [bookings, lessons, userRole]);
+  }, [bookings, lessons, userRole, userId]);
 
-  const calculateStats = () => {
+  const calculateStats = async () => {
     const now = new Date();
     const thisMonth = now.getMonth();
     const thisYear = now.getFullYear();
@@ -56,6 +57,23 @@ export default function Analytics({ bookings, lessons = [], userRole }: Analytic
     const lessonsCreated = lessons.length;
     const lessonsBooked = userRole === 'STUDENT' ? totalBookings : 0;
 
+    let averageRating = 0;
+    if (userRole === 'TEACHER') {
+      try {
+        const res = await fetch(`/api/reviews?teacherId=${userId}`);
+        if (res.ok) {
+          const reviews = await res.json();
+          if (reviews.length > 0) {
+            averageRating =
+              reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) /
+              reviews.length;
+          }
+        }
+      } catch (e) {
+        console.error('Failed to fetch reviews', e);
+      }
+    }
+
     setStats({
       totalBookings,
       completedBookings,
@@ -63,7 +81,7 @@ export default function Analytics({ bookings, lessons = [], userRole }: Analytic
       cancelledBookings,
       totalEarnings,
       totalSpent,
-      averageRating: 0, // Will be implemented with reviews
+      averageRating,
       lessonsCreated,
       lessonsBooked,
     });
