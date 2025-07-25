@@ -19,11 +19,11 @@ const userProfileSchema = z.object({
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: { userId: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
-    const { userId } = await params;
+    const { userId } = params;
 
     if (!session || session.user?.id !== userId) {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -60,11 +60,11 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: Promise<{ userId: string }> }
+  { params }: { params: { userId: string } }
 ) {
   try {
     const session = await getServerSession(authOptions);
-    const { userId } = await params;
+    const { userId } = params;
 
     if (!session || session.user?.id !== userId) {
       return new NextResponse("Unauthorized", { status: 401 });
