@@ -1,4 +1,8 @@
-import { authOptions } from './auth';
+jest.mock('@auth/prisma-adapter', () => ({
+  PrismaAdapter: jest.fn(() => ({})),
+}));
+
+const { authOptions } = require('./auth');
 
 describe('authOptions', () => {
   it('should be defined', () => {
