@@ -104,6 +104,12 @@ export default function Header() {
                 >
                   My Lessons
                 </Link>
+                <Link
+                  href="/teacher/reviews"
+                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  My Reviews
+                </Link>
               </>
             )}
             {session.user.role === 'ADMIN' && (
@@ -145,16 +151,27 @@ export default function Header() {
                   <div className="px-4 py-4 text-gray-500">Loading...</div>
                 ) : notifications.length === 0 ? (
                   <div className="px-4 py-4 text-gray-500">No notifications</div>
-                ) : notifications.map((notif: any) => (
-                  <button
-                    key={notif.id}
-                    onClick={() => handleNotifItemClick(notif.id, notif.link)}
-                    className={`block w-full text-left px-4 py-3 text-sm ${notif.read ? 'text-gray-500' : 'text-gray-900 font-medium bg-blue-50'} hover:bg-blue-100`}
-                  >
-                    {notif.message}
-                    <span className="block text-xs text-gray-400 mt-1">{new Date(notif.createdAt).toLocaleString()}</span>
-                  </button>
-                ))}
+                ) : (
+                  <>
+                    {notifications.map((notif: any) => (
+                      <button
+                        key={notif.id}
+                        onClick={() => handleNotifItemClick(notif.id, notif.link)}
+                        className={`block w-full text-left px-4 py-3 text-sm ${notif.read ? 'text-gray-500' : 'text-gray-900 font-medium bg-blue-50'} hover:bg-blue-100`}
+                      >
+                        {notif.message}
+                        <span className="block text-xs text-gray-400 mt-1">{new Date(notif.createdAt).toLocaleString()}</span>
+                      </button>
+                    ))}
+                    <Link
+                      href="/notifications"
+                      className="block text-center text-sm text-blue-600 py-2 border-t hover:bg-blue-50"
+                      onClick={() => setIsNotifOpen(false)}
+                    >
+                      View all
+                    </Link>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -262,6 +279,13 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     My Lessons
+                  </Link>
+                  <Link
+                    href="/teacher/reviews"
+                    className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    My Reviews
                   </Link>
                 </>
               )}
