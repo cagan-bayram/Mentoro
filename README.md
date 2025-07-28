@@ -6,7 +6,8 @@ Mentoro is an online mentoring platform currently in early development. The
 codebase includes authentication, a basic calendar component and a simple review
 form. Initial versions of an admin dashboard and direct messaging have recently
 been added. See the [project roadmap](./ROADMAP.md) for a list of upcoming
-tasks.
+tasks. The application now includes basic PWA support so you can install it on
+your device and access cached pages when offline.
 
 ## Getting Started
 
