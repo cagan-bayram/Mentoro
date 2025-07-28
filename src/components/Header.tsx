@@ -104,6 +104,12 @@ export default function Header() {
                 >
                   My Lessons
                 </Link>
+                <Link
+                  href="/teacher/reviews"
+                  className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                >
+                  My Reviews
+                </Link>
               </>
             )}
             {session.user.role === 'ADMIN' && (
@@ -273,6 +279,13 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     My Lessons
+                  </Link>
+                  <Link
+                    href="/teacher/reviews"
+                    className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    My Reviews
                   </Link>
                 </>
               )}
