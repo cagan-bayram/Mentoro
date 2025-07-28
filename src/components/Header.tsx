@@ -121,6 +121,12 @@ export default function Header() {
               </Link>
             )}
             <Link
+              href="/onboarding"
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              Getting Started
+            </Link>
+            <Link
               href="/calendar"
               className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
             >
@@ -298,6 +304,13 @@ export default function Header() {
                   Admin
                 </Link>
               )}
+              <Link
+                href="/onboarding"
+                className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Getting Started
+              </Link>
               <Link
                 href="/calendar"
                 className="block px-3 py-2 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md"

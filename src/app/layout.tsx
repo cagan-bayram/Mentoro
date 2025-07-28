@@ -8,6 +8,11 @@ import { Toaster } from "sonner";
 export const metadata: Metadata = {
   title: "Mentoro - Connect with Mentors",
   description: "Learn from expert mentors in any subject",
+  manifest: "/manifest.json",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+  },
 };
 
 export default function RootLayout({
