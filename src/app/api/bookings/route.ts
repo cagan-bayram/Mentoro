@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import * as z from 'zod';
+import { rateLimit } from '@/lib/rateLimit';
 
 // GET /api/bookings - List bookings (filtered by user role)
 export async function GET(request: NextRequest) {
@@ -86,6 +88,12 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/bookings - Create a new booking
+const bookingSchema = z.object({
+  lessonId: z.string(),
+  startTime: z.string().refine((v) => !isNaN(Date.parse(v)), 'Invalid start time'),
+  endTime: z.string().refine((v) => !isNaN(Date.parse(v)), 'Invalid end time'),
+});
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
@@ -110,13 +118,12 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { lessonId, startTime, endTime } = body;
+    const { lessonId, startTime, endTime } = bookingSchema.parse(body);
 
-    // Validate required fields
-    if (!lessonId || !startTime || !endTime) {
+    if (!rateLimit(session.user.id)) {
       return NextResponse.json(
-        { error: 'Lesson ID, start time, and end time are required' },
-        { status: 400 }
+        { error: 'Too many requests' },
+        { status: 429 }
       );
     }
 
@@ -240,10 +247,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(booking, { status: 201 });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+    }
     console.error('Error creating booking:', error);
     return NextResponse.json(
       { error: 'Failed to create booking' },
       { status: 500 }
     );
   }
-} 
+}
