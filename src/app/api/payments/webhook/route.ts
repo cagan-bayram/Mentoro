@@ -26,24 +26,36 @@ export async function POST(req: NextRequest) {
   }
 
   // Handle the event
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.Checkout.Session;
-    const bookingId = session.metadata?.bookingId;
-    if (bookingId) {
-      // Update Payment and Booking status
+  // inside the existing event handler for checkout.session.completed
+if (event.type === 'checkout.session.completed') {
+  const session = event.data.object as Stripe.Checkout.Session;
+  const bookingId = session.metadata?.bookingId;
+  const paymentId = session.metadata?.paymentId;
+  if (bookingId && paymentId) {
+    const paymentRecord = await prisma.payment.findUnique({ where: { id: paymentId } });
+    if (paymentRecord) {
+      const amount = paymentRecord.amount;
+      const commission = parseFloat((amount * 0.10).toFixed(2));
+      const netAmount = parseFloat((amount - commission).toFixed(2));
+
       await prisma.payment.update({
-        where: { bookingId },
+        where: { id: paymentId },
         data: {
           status: 'PAID',
           stripePaymentIntentId: session.payment_intent as string,
+          commission,
+          netAmount,
         },
       });
+
       await prisma.booking.update({
         where: { id: bookingId },
         data: { status: 'CONFIRMED' },
       });
     }
   }
+}
+
 
   // Respond to Stripe
   return new Response('Webhook received', { status: 200 });

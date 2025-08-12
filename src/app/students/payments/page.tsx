@@ -14,6 +14,8 @@ interface Payment {
   status: "PENDING" | "PAID" | "FAILED" | "REFUNDED";
   stripeSessionId?: string;
   stripePaymentIntentId?: string;
+  commission?: number;
+  netAmount?: number;
   createdAt: string;
   booking: {
     id: string;
@@ -143,6 +145,14 @@ export default function StudentPaymentsPage() {
                     <div>
                       <span className="text-sm text-gray-600">Amount</span>
                       <span className="ml-2 font-medium">${payment.amount} {payment.currency.toUpperCase()}</span>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Commission</span>
+                      <span className="ml-2 font-medium">${payment.commission?.toFixed(2) ?? '—'}</span>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600">Net to Teacher</span>
+                      <span className="ml-2 font-medium">${payment.netAmount?.toFixed(2) ?? '—'}</span>
                     </div>
                     <div>
                       <span className="text-sm text-gray-600">Date</span>

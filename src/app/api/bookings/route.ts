@@ -245,6 +245,17 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // After creating the booking record
+    await prisma.payment.create({
+      data: {
+        bookingId: booking.id,
+        amount: price,
+        currency: 'usd',
+        status: 'PENDING',
+      },
+    });
+
+
     return NextResponse.json(booking, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {

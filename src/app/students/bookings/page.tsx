@@ -30,6 +30,18 @@ interface Booking {
   };
 }
 
+async function handlePay(bookingId: string) {
+  const res = await fetch(`/api/payments/checkout/${bookingId}`, { method: 'POST' });
+  if (!res.ok) {
+    alert('Failed to start payment.');
+    return;
+  }
+  const data = await res.json();
+  if (data.url) {
+    window.location.href = data.url; // redirect to Stripe
+  }
+}
+
 export default function StudentBookingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -260,6 +272,12 @@ export default function StudentBookingsPage() {
                           >
                             Cancel Booking
                           </Button>
+                          <button
+                            className="bg-blue-600 text-white px-3 py-2 rounded"
+                            onClick={() => handlePay(booking.id)}
+                          >
+                            Pay now
+                          </button>
                         </div>
                       )}
                     </div>

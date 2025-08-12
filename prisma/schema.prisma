@@ -175,6 +175,8 @@ model Payment {
   status                PaymentStatus @default(PENDING)
   stripeSessionId       String?
   stripePaymentIntentId String?
+  commission            Float?
+  netAmount             Float?
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
 
