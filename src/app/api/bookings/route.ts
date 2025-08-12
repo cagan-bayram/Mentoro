@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import * as z from 'zod';
 import { rateLimit } from '@/lib/rateLimit';
+import { sendEmail } from '@/lib/email';
 
 // GET /api/bookings - List bookings (filtered by user role)
 export async function GET(request: NextRequest) {
@@ -245,7 +246,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // After creating the booking record
+    // After creating the booking record, create a payment and notify the teacher
     await prisma.payment.create({
       data: {
         bookingId: booking.id,
@@ -255,8 +256,27 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Notify the teacher of the new booking via email and in‑app notification
+    const teacher = await prisma.user.findUnique({ where: { id: booking.teacherId } });
+    const student = await prisma.user.findUnique({ where: { id: booking.studentId } });
+    if (teacher?.email) {
+      await sendEmail({
+        to: teacher.email,
+        subject: 'Mentoro: New Booking Request',
+        text: `${student?.name || 'A student'} has booked your lesson "${lesson.title}". Please confirm or decline the booking in your dashboard.`,
+      });
+    }
+    await prisma.notification.create({
+      data: {
+        userId: booking.teacherId,
+        type: 'NEW_BOOKING',
+        message: `${student?.name || 'A student'} booked your lesson "${lesson.title}"`,
+        link: `/teacher/bookings/${booking.id}`,
+      },
+    });
 
     return NextResponse.json(booking, { status: 201 });
+  
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });

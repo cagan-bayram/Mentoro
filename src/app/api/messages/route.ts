@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { sendEmail } from '@/lib/email';
+
 
 export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -45,12 +47,36 @@ export async function POST(request: NextRequest) {
       { status: 400 }
     );
   }
-
+  
+  // Create the message
   const message = await prisma.message.create({
     data: {
       content,
       recipientId,
       senderId: session.user.id,
+    },
+  });
+
+  // Fetch sender/recipient for notification
+  const sender = await prisma.user.findUnique({ where: { id: session.user.id } });
+  const recipient = await prisma.user.findUnique({ where: { id: recipientId } });
+
+  // Send an email to the recipient (optional, can be removed if you only want in‑app notifications)
+  if (recipient?.email) {
+    await sendEmail({
+      to: recipient.email,
+      subject: 'Mentoro: New Message',
+      text: `${sender?.name || 'A user'} sent you a message: "${content}"`,
+    });
+  }
+
+  // Create an in-app notification for the recipient
+  await prisma.notification.create({
+    data: {
+      userId: recipientId,
+      type: 'NEW_MESSAGE',
+      message: `${sender?.name || 'A user'} sent you a message: "${content}"`,
+      link: `/messages/${message.id}`,
     },
   });
 
